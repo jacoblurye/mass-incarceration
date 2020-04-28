@@ -1,0 +1,4 @@
+beautifulsoup4~=4.8.0
+pandas~=1.0.1
+requests~=2.22.0
+tabula-py~=2.1.0
