@@ -4,7 +4,7 @@ Monitoring Massachusetts' progress towards reducing its incarcerated population 
 
 ## About the Data
 
-The Massachusetts Department of Corrections (DOC) releases [weekly reports](https://www.mass.gov/lists/weekly-inmate-count-2020) with counts of incarcerated people housed in its prison facilities. The reports are PDF files, not spreadsheets or CSVs, which makes data analysis difficult. 
+The Massachusetts Department of Correction (DOC) releases [weekly reports](https://www.mass.gov/lists/weekly-inmate-count-2020) with counts of incarcerated people housed in its prison facilities. The reports are PDF files, not spreadsheets or CSVs, which makes data analysis difficult. 
 
 With the magic of [`tabula-py`](https://tabula-py.readthedocs.io), though, we can extract data from these PDFs into CSVs for easier analysis and visualization. In this repository:
 - [**`pdfs/`**](https://github.com/jacoblurye/ma-incarceration/tree/master/pdfs) contains the original PDF reports from mass.gov that have been processed.
