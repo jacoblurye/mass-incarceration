@@ -70,6 +70,17 @@ def process_prison_df(df: pd.DataFrame) -> pd.DataFrame:
     for col in df.columns[1:]:
         df[col] = df[col].apply(clean_number)
 
+    # Special case where there are two MCI CEDAR JUNCTION @ WALPOLE facilities
+    seen_first_cedar_junction = False
+    for i, row in df.iterrows():
+        if row.facility == "MCI CEDAR JUNCTION @ WALPOLE":
+            if seen_first_cedar_junction:
+                row.facility = f"{row.facility} (Medium)"
+            else:
+                seen_first_cedar_junction = True
+                row.facility = f"{row.facility} (Maximum)"
+            df.loc[i] = row
+
     return df
 
 
