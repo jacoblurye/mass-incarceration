@@ -1,6 +1,8 @@
 import os
+from multiprocessing import cpu_count
 
 SLEEP_FOR = 0.5
+NUM_THREADS = cpu_count() * 2 + 1
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.join(THIS_DIR, "..")

@@ -1,4 +1,4 @@
-facility,operational_capacity,hoc_population,jail_population,total_occupancy,percent_occupied,report_date
+facility,operational_capacity,hoc_population,county_population,total_occupancy,percent_occupied,report_date
 BARNSTABLE,300.0,108.0,71.0,179.0,60.0,2020-04-20
 BERKSHIRE,292.0,81.0,68.0,149.0,51.0,2020-04-20
 BRISTOL (Ash Street),206.0,18.0,84.0,102.0,50.0,2020-04-20

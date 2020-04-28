@@ -8,7 +8,7 @@ The Massachusetts Department of Correction (DOC) releases [weekly reports](https
 
 With the magic of [`tabula-py`](https://tabula-py.readthedocs.io), though, we can extract data from these PDFs into CSVs for easier analysis and visualization. In this repository:
 - [**`pdfs/`**](https://github.com/jacoblurye/ma-incarceration/tree/master/pdfs) contains the original PDF reports from mass.gov that have been processed.
-- [**`data/`**](https://github.com/jacoblurye/ma-incarceration/tree/master/data) contains the extracted CSV data, grouped by state (`prisons.csv`) and county (`jails.csv`).
+- [**`data/`**](https://github.com/jacoblurye/ma-incarceration/tree/master/data) contains the extracted CSV data, grouped by state (`state_facilities.csv`) and county (`county_facilities.csv`).
 
 **Notes:** Not all the data in the reports is currently extracted (in particular, county-level gender breakdowns), and the reports themselves are missing some crucial information like demographic data, offense classifications, and what portion of the population is pre-trial vs. sentenced.
 

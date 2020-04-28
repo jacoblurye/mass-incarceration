@@ -7,7 +7,7 @@ from typing import List, Union
 import pandas as pd
 from tabula import read_pdf_with_template
 
-from .constants import TABULA_TEMPLATE_PATH, DATA_DIR
+from .constants import TABULA_TEMPLATE_PATH, DATA_DIR, NUM_THREADS
 
 prisons = {"maximum": [""], "medium": [], "minimum": [], "minimum/pre-release": []}
 
@@ -46,7 +46,7 @@ def clean_number(v) -> Union[int, float]:
     return v
 
 
-prison_columns = [
+state_columns = [
     "facility",
     "operational_capacity",
     "inmates_in_general_population_beds",
@@ -56,7 +56,7 @@ prison_columns = [
 ]
 
 
-def process_prison_df(df: pd.DataFrame) -> pd.DataFrame:
+def process_state_df(df: pd.DataFrame) -> pd.DataFrame:
     # Drop rows and columns that we want to exclude
     df = df.dropna(how="all")
     df = df.apply(left_fill_row, axis=1)
@@ -64,7 +64,7 @@ def process_prison_df(df: pd.DataFrame) -> pd.DataFrame:
     df = df[df.isnull().sum(axis=1) < 4]
     df = df.dropna(how="all", axis=1)
 
-    df.columns = prison_columns
+    df.columns = state_columns
 
     # Clean up columns for which we expect number values
     for col in df.columns[1:]:
@@ -84,41 +84,41 @@ def process_prison_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def process_prison_df_part(df: pd.DataFrame) -> pd.DataFrame:
+def process_state_df_part(df: pd.DataFrame) -> pd.DataFrame:
     first_row = pd.DataFrame({c: [c] for c in df.columns})
     df = pd.concat([first_row, df])
 
-    df.columns = prison_columns[: df.shape[1]]
+    df.columns = state_columns[: df.shape[1]]
     df["inmates_in_support_beds"] = 0
     df["total_facility_occupancy"] = df.inmates_in_general_population_beds
 
-    return process_prison_df(df)
+    return process_state_df(df)
 
 
-jail_columns = [
+county_columns = [
     "facility",
     "operational_capacity",
     "hoc_population",
-    "jail_population",
+    "county_population",
     "total_occupancy",
     "percent_occupied",
 ]
 
 # Special case - Ash Street sometimes missing line in table
-def process_jail_df(df: pd.DataFrame, data_dir: str = DATA_DIR) -> pd.DataFrame:
+def process_county_df(df: pd.DataFrame, data_dir: str = DATA_DIR) -> pd.DataFrame:
     df = df[df[df.columns[2]] != "HOC"]
 
-    df.columns = jail_columns
+    df.columns = county_columns
 
     new_rows = []
     current_county = None
     for _, row in df.iterrows():
         if row.facility == "Ash Street" and isinstance(row.operational_capacity, str):
-            jail_population = row.hoc_population
+            county_population = row.hoc_population
             row.hoc_population = row.operational_capacity.split("\r")[0][3:]
-            row.jail_population, row.total_occupancy, row.percent_occupied = (
-                jail_population,
-                row.jail_population,
+            row.county_population, row.total_occupancy, row.percent_occupied = (
+                county_population,
+                row.county_population,
                 row.total_occupancy,
             )
             row.operational_capacity = 206
@@ -150,49 +150,49 @@ def process_report_date(df: pd.DataFrame) -> datetime:
 def extract_pdf_data(
     pdf_paths: List[str], tabula_template_path: str = TABULA_TEMPLATE_PATH,
 ):
-    is_prison_df = lambda df: "OPERATIONAL\rCAPACITY 1" in df.columns
-    is_prison_df_part = lambda df: "BOSTON PRE-RELEASE" in df.columns
-    is_jail_df = lambda df: "COUNTY\rFACILITIES" in df.columns
+    is_state_df = lambda df: "OPERATIONAL\rCAPACITY 1" in df.columns
+    is_state_df_part = lambda df: "BOSTON PRE-RELEASE" in df.columns
+    is_county_df = lambda df: "COUNTY\rFACILITIES" in df.columns
     is_report_date = lambda df: df.shape[1] == 1 and df.columns[0].startswith("DATE :")
 
     def process_pdf(pdf):
         print(pdf)
         dfs = read_pdf_with_template(pdf, tabula_template_path)
         report = {}
-        prison_df_part = None
+        state_df_part = None
         for df in dfs:
-            if is_jail_df(df):
-                report["jail_df"] = process_jail_df(df)
-            elif is_prison_df(df):
-                report["prison_df"] = process_prison_df(df)
-            elif is_prison_df_part(df):
-                prison_df_part = process_prison_df_part(df)
+            if is_county_df(df):
+                report["county_df"] = process_county_df(df)
+            elif is_state_df(df):
+                report["state_df"] = process_state_df(df)
+            elif is_state_df_part(df):
+                state_df_part = process_state_df_part(df)
             elif is_report_date(df):
                 report["report_date"] = process_report_date(df)
 
-        if prison_df_part is not None:
-            report["prison_df"] = report["prison_df"].append(prison_df_part)
+        if state_df_part is not None:
+            report["state_df"] = report["state_df"].append(state_df_part)
 
-        for expected_key in ["jail_df", "prison_df", "report_date"]:
+        for expected_key in ["county_df", "state_df", "report_date"]:
             assert expected_key in report, f"Couldn't extract {expected_key} from {pdf}"
 
-        report["jail_df"]["report_date"] = report["report_date"]
-        report["prison_df"]["report_date"] = report["report_date"]
+        report["county_df"]["report_date"] = report["report_date"]
+        report["state_df"]["report_date"] = report["report_date"]
 
         return report
 
-    with ThreadPool(12) as pool:
+    with ThreadPool(NUM_THREADS) as pool:
         reports = pool.map(process_pdf, pdf_paths)
 
     # Join all DFs with an additional date column
-    jail_dfs = []
-    prison_dfs = []
+    county_dfs = []
+    state_dfs = []
     for report in reports:
-        jail_dfs.append(report["jail_df"])
-        prison_dfs.append(report["prison_df"])
+        county_dfs.append(report["county_df"])
+        state_dfs.append(report["state_df"])
 
-    prison_df = pd.concat(prison_dfs)
-    jail_df = pd.concat(jail_dfs)
+    state_df = pd.concat(state_dfs)
+    county_df = pd.concat(county_dfs)
 
-    prison_df.to_csv(os.path.join(DATA_DIR, "prisons.csv"), index=False)
-    jail_df.to_csv(os.path.join(DATA_DIR, "jails.csv"), index=False)
+    state_df.to_csv(os.path.join(DATA_DIR, "state_facilities.csv"), index=False)
+    county_df.to_csv(os.path.join(DATA_DIR, "county_facilities.csv"), index=False)
