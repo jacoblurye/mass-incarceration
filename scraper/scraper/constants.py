@@ -5,8 +5,9 @@ SLEEP_FOR = 0.5
 NUM_THREADS = cpu_count() * 2 + 1
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.join(THIS_DIR, "..")
-TABULA_TEMPLATE_PATH = os.path.join(BASE_DIR, "weekly-report.tabula-template.json")
+SCRAPER_DIR = os.path.join(THIS_DIR, "..")
+TABULA_TEMPLATE_PATH = os.path.join(SCRAPER_DIR, "weekly-report.tabula-template.json")
+BASE_DIR = os.path.join(SCRAPER_DIR, "..")
 PDF_DIR = os.path.join(BASE_DIR, "pdfs")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
