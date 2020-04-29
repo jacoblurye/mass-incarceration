@@ -24,7 +24,12 @@ jobs:
           pip install -r requirements.txt
       - name: Download and process new data
         run: python -m scraper
-      - name: Save new data with git
+      - name: Add downloaded data to git
         run: |
-          git add .
-          git commit -m "Ingest new report data"
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Refresh Data Job"
+          git commit -m "Add changes" -a
+      - name: Push data
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
