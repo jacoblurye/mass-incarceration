@@ -1,7 +1,7 @@
 # ma-incarceration
 ![Refresh Data](https://github.com/jacoblurye/ma-incarceration/workflows/Refresh%20Data/badge.svg)
 
-Monitoring Massachusetts' progress towards reducing its incarcerated population during the COVID-19 pandemic.
+Monitoring Massachusetts' progress towards reducing its incarcerated population.
 
 ## About the Data
 
