@@ -37,6 +37,9 @@ def download_pdfs(
     file for a PDF URL appears to already exist, only overwrite it if `overwrite` is True.
     Return the list of local file paths where the PDFs are saved.
     """
+    if not os.path.exists(target_dir):
+        os.mkdir(target_dir)
+
     file_paths = []
     for url in pdf_urls:
         file_name = _pdf_url_to_filename(url)

@@ -148,8 +148,13 @@ def process_report_date(df: pd.DataFrame) -> datetime:
 
 
 def extract_pdf_data(
-    pdf_paths: List[str], tabula_template_path: str = TABULA_TEMPLATE_PATH,
+    pdf_paths: List[str],
+    tabula_template_path: str = TABULA_TEMPLATE_PATH,
+    target_dir: str = DATA_DIR,
 ):
+    if not os.path.exists(target_dir):
+        os.mkdir(target_dir)
+
     is_state_df = lambda df: "OPERATIONAL\rCAPACITY 1" in df.columns
     is_state_df_part = lambda df: "BOSTON PRE-RELEASE" in df.columns
     is_county_df = lambda df: "COUNTY\rFACILITIES" in df.columns
@@ -194,5 +199,5 @@ def extract_pdf_data(
     state_df = pd.concat(state_dfs)
     county_df = pd.concat(county_dfs)
 
-    state_df.to_csv(os.path.join(DATA_DIR, "state_facilities.csv"), index=False)
-    county_df.to_csv(os.path.join(DATA_DIR, "county_facilities.csv"), index=False)
+    state_df.to_csv(os.path.join(target_dir, "state_facilities.csv"), index=False)
+    county_df.to_csv(os.path.join(target_dir, "county_facilities.csv"), index=False)
