@@ -1,0 +1,27 @@
+# This workflow will scrape and process new report data from https://www.mass.gov/lists/weekly-inmate-count-2020.
+
+name: Refresh Data
+
+on:
+  push:
+    branches: master
+  schedule:
+    - cron: 0 0 * * 2
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Download and process new data
+      run: python -m scraper
