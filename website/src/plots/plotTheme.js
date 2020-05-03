@@ -32,7 +32,7 @@ const plotTheme = {
   grid: {
     line: {
       stroke: theme.colors.text,
-      opacity: 0.5,
+      opacity: 0.2,
     },
   },
 };

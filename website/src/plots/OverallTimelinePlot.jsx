@@ -109,9 +109,9 @@ const markers = [
   makeEventMarker("MA Supreme Court rules on SJC-12926", "2020-04-03"),
 ];
 
-const OverallTimelinePlot = ({ title, stateData, countyData, width }) => {
-  const stateTotals = getTotals(countyData);
-  const capacityTotals = getTotalsAtCapacity(countyData);
+const OverallTimelinePlot = ({ title, csvData, width }) => {
+  const stateTotals = getTotals(csvData);
+  const capacityTotals = getTotalsAtCapacity(csvData);
   const data = [
     {
       id: "Overcrowded County Facilities",

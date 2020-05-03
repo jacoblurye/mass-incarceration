@@ -6,7 +6,7 @@ const withResponsiveContainer = (WrapperComponent) => (props) => {
   return (
     <Box>
       <Media at="xs">
-        <WrapperComponent width={breakpoints.sm / 2} {...props} />
+        <WrapperComponent width={(breakpoints.sm * 2) / 3} {...props} />
       </Media>
       <Media at="sm">
         <WrapperComponent width={breakpoints.sm} {...props} />

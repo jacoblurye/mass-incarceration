@@ -4,12 +4,11 @@ import { useStaticQuery, graphql } from "gatsby";
 import Layout from "../components/Layout";
 import SEO from "../components/Seo";
 import OverallTimelinePlot from "../plots/OverallTimelinePlot";
-import ReleasesPlot from "../plots/OverallReleasesPlot";
 import { Flex } from "rebass";
 import FacilityPlots from "../plots/FacilityPlots";
 
 const IndexPage = () => {
-  const { stateFile, countyFile } = useStaticQuery(csvDataQuery);
+  const { countyFile } = useStaticQuery(csvDataQuery);
 
   return (
     <Layout>
@@ -17,14 +16,9 @@ const IndexPage = () => {
       <Flex alignItems="center" flexDirection="column">
         <OverallTimelinePlot
           title="People in All County Prisons"
-          stateData={stateFile.fields.csvData}
-          countyData={countyFile.fields.csvData}
+          csvData={countyFile.fields.csvData}
         />
         <FacilityPlots csvData={countyFile.fields.csvData} />
-        {/* <ReleasesPlot
-          title="Change at County Facilities since March 9th"
-          csvData={countyFile.fields.csvData}
-        /> */}
       </Flex>
     </Layout>
   );

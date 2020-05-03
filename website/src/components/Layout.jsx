@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "rebass";
-import { breakpoints } from "../Media";
 import Header from "./Header";
 
 const Layout = ({ children }) => {
