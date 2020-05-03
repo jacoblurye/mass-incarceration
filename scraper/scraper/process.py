@@ -99,7 +99,7 @@ county_columns = [
     "facility",
     "operational_capacity",
     "hoc_population",
-    "county_population",
+    "jail_population",
     "total_occupancy",
     "percent_occupied",
 ]
@@ -112,27 +112,42 @@ def process_county_df(df: pd.DataFrame, data_dir: str = DATA_DIR) -> pd.DataFram
 
     new_rows = []
     current_county = None
+    ash_street_bug = False
     for _, row in df.iterrows():
         if row.facility == "Ash Street" and isinstance(row.operational_capacity, str):
-            county_population = row.hoc_population
+            jail_population = row.hoc_population
             row.hoc_population = row.operational_capacity.split("\r")[0][3:]
-            row.county_population, row.total_occupancy, row.percent_occupied = (
-                county_population,
-                row.county_population,
+            row.jail_population, row.total_occupancy, row.percent_occupied = (
+                jail_population,
+                row.jail_population,
                 row.total_occupancy,
             )
             row.operational_capacity = 206
-        if pd.isnull(row.operational_capacity):
+            ash_street_bug = True
+        elif row.facility == 'Dartmouth' and ash_street_bug:
+            row.jail_population, row.total_occupancy, row.percent_occupied = (row.hoc_population, row.jail_population, row.total_occupancy)
+            row.hoc_population = float(row.total_occupancy) - float(row.jail_population)
+        elif row.facility == 'SUFFOLK' and not pd.isnull(row.operational_capacity):
             current_county = row.facility
-        elif (
-            row.facility.isupper() and row.facility.isalnum() and row.facility != "WIT"
-        ):
+            row.facility = "SUFFOLK (Nashua Street)"
             new_rows.append(row)
-        else:
+            continue
+        
+        if row.facility.isupper() and row.facility.isalnum() and row.facility != "WIT":
+            if pd.isnull(row.operational_capacity):
+                current_county = row.facility
+            else:
+                new_rows.append(row)
+        elif not pd.isnull(row.operational_capacity):
             row.facility = f"{current_county} ({row.facility})"
             new_rows.append(row)
+        else:
+            assert row.facility == "Nashua Street"
 
     df = pd.DataFrame(new_rows)
+    
+    # Drop some more rows
+    df = df[df.facility != 'TOTAL']
 
     # Clean up columns for which we expect number values
     for col in df.columns[1:]:
@@ -201,3 +216,6 @@ def extract_pdf_data(
 
     state_df.to_csv(os.path.join(target_dir, "state_facilities.csv"), index=False)
     county_df.to_csv(os.path.join(target_dir, "county_facilities.csv"), index=False)
+
+if __name__ == "__main__":
+    extract_pdf_data(["/Users/jlurye/code/sandbox/ma-incarceration/scraper/scraper/../../pdfs/weekly-inmate-count-232020.pdf"])
