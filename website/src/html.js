@@ -6,6 +6,13 @@ export default function HTML(props) {
   return (
     <html {...props.htmlAttributes}>
       <head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
         {/* Inject @artsy/fresnel styles in to the head */}
         <style id="fresnel-styles">{mediaStyles}</style>
 

@@ -29,6 +29,7 @@ const Header = () => {
         <RebassLink
           color="primary"
           target="_blank"
+          rel="noreferrer noopener"
           href="https://www.mass.gov/lists/weekly-inmate-count-2020"
         >
           mass.gov

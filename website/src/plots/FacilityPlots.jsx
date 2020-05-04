@@ -5,13 +5,15 @@ import { Flex, Box, Heading } from "rebass";
 import FacilityTimelinePlot from "./FacilityTimelinePlot";
 
 const FacilityPlots = ({ csvData }) => {
+  const facilities = uniq(map(csvData, "facility"));
+
   return (
     <Flex alignItems="center" flexDirection="column">
       <Flex flexDirection="column" alignItems="center">
         <Heading>Occupancy by Facility</Heading>
-        <Flex justifyContent="space-evenly" cols={4} flexWrap="wrap">
-          {uniq(map(csvData, "facility")).map((f) => (
-            <Box key={f} my={2}>
+        <Flex justifyContent="space-evenly" flexWrap="wrap">
+          {facilities.map((f) => (
+            <Box key={f} my={4}>
               <FacilityTimelinePlot facility={f} csvData={csvData} />
             </Box>
           ))}

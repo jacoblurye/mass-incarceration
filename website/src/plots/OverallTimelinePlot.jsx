@@ -13,7 +13,7 @@ const commonPlotProps = {
   theme: plotTheme,
   useMesh: true,
   height: 500,
-  // curve: "basis",
+  lineWidth: 1,
   colors: ["#f47560", "#61cdbb"],
   enableArea: true,
   enableGridX: false,
@@ -45,7 +45,6 @@ const commonPlotProps = {
     },
   ],
   tooltip: ({ point }) => {
-    console.log(point);
     return (
       <Flex
         flexDirection="column"

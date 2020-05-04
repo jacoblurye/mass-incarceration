@@ -11,6 +11,8 @@ const commonPlotProps = {
   useMesh: true,
   width: 340,
   height: 300,
+  lineWidth: 1,
+  pointSize: 5,
   enableArea: true,
   areaOpacity: 0.5,
   enableGridX: false,
