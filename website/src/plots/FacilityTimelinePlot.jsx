@@ -1,51 +1,47 @@
 import React from "react";
 import maxBy from "lodash/maxBy";
 import { Line } from "@nivo/line";
-import { Heading, Flex, Box, Text } from "rebass";
+import { Heading, Text } from "rebass";
 import plotTheme from "./plotTheme";
 import { theme } from "../Theme";
+import Tooltip from "./Tooltip";
 
-const commonPlotProps = {
-  animate: false,
-  theme: plotTheme,
-  useMesh: true,
-  width: 340,
+const config = {
   height: 300,
-  lineWidth: 1,
-  pointSize: 5,
-  enableArea: true,
-  areaOpacity: 0.5,
-  enableGridX: false,
-  margin: { top: 10, right: 30, bottom: 50, left: 60 },
-  xScale: { type: "time", format: "%Y-%m-%d", precision: "day" },
-  xFormat: "time:%Y-%m-%d",
-  axisLeft: {
-    legend: "Incarcerated People",
-    legendOffset: -50,
-    legendPosition: "middle",
-  },
-  tooltip: ({ point }) => {
-    return (
-      <Flex
-        flexDirection="column"
-        bg="background"
-        my={1}
-        p={1}
-        fontSize={1}
-        sx={{ borderRadius: 5 }}
-        top={100}
-      >
-        <Box>% Occupied: {point.data.yFormatted}%</Box>
-        <Box>Prisoners: {point.data.datum.total_occupancy}</Box>
-        <Box>Report Date: {point.data.xFormatted}</Box>
-      </Flex>
-    );
-  },
+  width: 340,
+  numTicks: 3,
+  colors: ["#f47560", "#e8c1a0", "#61cdbb"],
 };
 
-const colors = ["#f47560", "#e8c1a0", "#61cdbb"];
-const crowdingLevel = (d) =>
-  d.percent_occupied >= 100 ? 0 : d.percent_occupied >= 90 ? 1 : 2;
+const sliceTooltip = ({ slice }) => {
+  const [point] = slice.points;
+  return (
+    <Tooltip
+      entries={[
+        {
+          label: "% Occupied",
+          value: `${point.data.yFormatted}%`,
+          color: config.colors[point.serieId],
+        },
+        {
+          label: "Prisoners",
+          value: point.data.datum.total_occupancy,
+          color: config.colors[point.serieId],
+        },
+        {
+          label: "Report Date",
+          value: point.data.xFormatted,
+        },
+      ]}
+    />
+  );
+};
+
+const crowdingLevel = (d) => {
+  if (d.percent_occupied >= 100) return 0;
+  if (d.percent_occupied >= 90) return 1;
+  return 2;
+};
 
 const makePoint = (d) => ({
   y: d.percent_occupied,
@@ -78,40 +74,50 @@ const FacilityTimelinePlot = ({ facility, csvData }) => {
     return [...acc, joinedSerie];
   }, []);
 
-  const yMax = maxBy(facilityData, "percent_occupied").percent_occupied;
+  const maxOccupancy = maxBy(facilityData, "percent_occupied").percent_occupied;
   const capacity = facilityData[0].operational_capacity;
 
   return (
     <>
-      <Heading textAlign="center" fontSize={2} marginTop={2}>
+      <Heading textAlign="center" fontSize={1} marginTop={2} maxWidth={340}>
         {facility}
       </Heading>
-      <Text fontSize={1} textAlign="center">
-        capacity: {capacity}
+      <Text fontSize={0} textAlign="center">
+        capacity: <strong>{capacity}</strong>
       </Text>
       <Line
-        {...commonPlotProps}
+        theme={plotTheme}
         data={joinedSeries}
-        colors={(d) => colors[d.id]}
+        width={config.width}
+        height={config.height}
+        margin={{ top: 3, right: 15, bottom: 20, left: 40 }}
+        colors={(d) => config.colors[d.id]}
+        lineWidth={1}
+        pointSize={4}
+        animate={false}
+        useMesh={true}
+        enableArea={true}
+        areaOpacity={0.5}
+        enableGridX={false}
         axisBottom={{
           format: "%b %d",
           tickValues: "every 4 weeks",
-          tickRotation: -90,
         }}
         axisLeft={{
-          tickValues: 3,
+          tickValues: config.numTicks,
           format: (y) => `${y}%`,
-          legend: "% Occupied",
-          legendOffset: -50,
-          legendPosition: "middle",
         }}
-        gridYValues={3}
+        gridYValues={config.numTicks}
         yScale={{
           type: "linear",
           stacked: false,
-          max: yMax <= 125 ? 125 : undefined,
+          max: maxOccupancy <= 125 ? 125 : undefined,
           min: 0,
         }}
+        xFormat="time:%Y-%m-%d"
+        xScale={{ type: "time", format: "%Y-%m-%d", precision: "day" }}
+        enableSlices="x"
+        sliceTooltip={sliceTooltip}
         markers={[
           {
             axis: "y",
@@ -124,7 +130,7 @@ const FacilityTimelinePlot = ({ facility, csvData }) => {
             },
           },
         ]}
-      ></Line>
+      />
     </>
   );
 };

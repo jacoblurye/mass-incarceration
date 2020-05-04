@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `Mass Incarceration`,
+    title: `Mass. Incarceration`,
     description: `Monitoring Massachusetts' progress towards reducing its incarcerated population.`,
     author: `Jacob Lurye`,
   },

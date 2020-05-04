@@ -26,6 +26,7 @@ const LastUpdatedBadge = () => {
         my: 1,
         p: 1,
         borderRadius: 5,
+        fontSize: 1,
       }}
     >
       <Text>Last Updated: {lastUpdatedDate.toLocaleString()}</Text>

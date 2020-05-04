@@ -18,14 +18,13 @@ const Header = () => {
 
   return (
     <Box>
-      <Heading fontSize={[5, 5, 6, 6]}>
+      <Heading marginBottom={2} fontSize={[5, 5, 6, 6]}>
         <GatsbyLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
           {title}
         </GatsbyLink>
       </Heading>
-      <Text>{description}</Text>
-      <Text>
-        Data from{" "}
+      <Text my={1}>
+        {description} Data from{" "}
         <RebassLink
           color="primary"
           target="_blank"
@@ -34,8 +33,11 @@ const Header = () => {
         >
           mass.gov
         </RebassLink>
-        . <LastUpdatedBadge />
+        .
       </Text>
+      <Box my={2}>
+        <LastUpdatedBadge />
+      </Box>
     </Box>
   );
 };
