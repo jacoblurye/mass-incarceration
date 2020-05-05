@@ -6,6 +6,10 @@
 
 // You can delete this file if you're not using it
 
-import { Boot } from "./src/Boot"
+import { Boot } from "./src/Boot";
 
-export const wrapRootElement = Boot
+export const wrapRootElement = Boot;
+
+export const shouldUpdateScroll = () => {
+  return false;
+};
