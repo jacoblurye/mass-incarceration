@@ -12,7 +12,8 @@ const config = { height: 500, colors: ["#f47560", "#61cdbb"] };
 
 const sliceTooltip = ({ slice }) => {
   const overallDatum = maxBy(slice.points, (p) => p.data.yFormatted);
-  const crowdedDatum = minBy(slice.points, (p) => p.data.yFormatted);
+  const crowdedDatum =
+    slice.points.length > 1 && minBy(slice.points, (p) => p.data.yFormatted);
   return (
     <Tooltip
       entries={[
@@ -21,7 +22,7 @@ const sliceTooltip = ({ slice }) => {
           value: overallDatum.data.yFormatted,
           color: config.colors[1],
         },
-        {
+        crowdedDatum && {
           label: "Prisoners (Crowded)",
           value: crowdedDatum.data.yFormatted,
           color: config.colors[0],
@@ -30,7 +31,7 @@ const sliceTooltip = ({ slice }) => {
           label: "Report Date",
           value: overallDatum.data.xFormatted,
         },
-      ]}
+      ].filter((e) => !!e)}
     />
   );
 };
