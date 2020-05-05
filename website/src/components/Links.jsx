@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Box, Text } from "rebass";
 import { Label, Radio } from "@rebass/forms";
 import { navigate } from "gatsby";
-import { useLocation } from "./Layout";
 
 const LinkedRadio = ({ name, path, label }) => {
   const currentPath = typeof window === "undefined" || window.location.pathname;
