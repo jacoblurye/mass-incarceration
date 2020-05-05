@@ -4,7 +4,12 @@ import { Label, Radio } from "@rebass/forms";
 import { navigate } from "gatsby";
 
 const LinkedRadio = ({ name, path, label }) => {
-  const currentPath = typeof window === "undefined" || window.location.pathname;
+  const currentPath =
+    typeof window === "undefined" ? undefined : window.location.pathname;
+
+  const forceUpdate = React.useState()[1];
+  React.useEffect(() => forceUpdate(), [currentPath, forceUpdate]);
+
   return (
     <Box p={1}>
       <Label>
