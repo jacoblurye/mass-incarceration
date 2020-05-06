@@ -1,5 +1,5 @@
-# ma-incarceration
-![Refresh Data](https://github.com/jacoblurye/ma-incarceration/workflows/Refresh%20Data/badge.svg)
+# Mass. Incarceration
+![Refresh Data and Rebuild Site](https://github.com/jacoblurye/ma-incarceration/workflows/Refresh%20Data%20and%20Rebuild%20Site/badge.svg)
 
 Monitoring Massachusetts' progress towards reducing its incarcerated population.
 
