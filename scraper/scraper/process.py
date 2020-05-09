@@ -9,9 +9,6 @@ from tabula import read_pdf_with_template
 
 from .constants import TABULA_TEMPLATE_PATH, DATA_DIR, NUM_THREADS
 
-prisons = {"maximum": [""], "medium": [], "minimum": [], "minimum/pre-release": []}
-
-
 def is_empty(v) -> bool:
     return v == None or v == "" or (isinstance(v, float) and math.isnan(v))
 
@@ -46,7 +43,7 @@ def clean_number(v) -> Union[int, float]:
     return v
 
 
-state_columns = [
+doc_columns = [
     "facility",
     "operational_capacity",
     "inmates_in_general_population_beds",
@@ -56,7 +53,7 @@ state_columns = [
 ]
 
 
-def process_state_df(df: pd.DataFrame) -> pd.DataFrame:
+def process_doc_df(df: pd.DataFrame) -> pd.DataFrame:
     # Drop rows and columns that we want to exclude
     df = df.dropna(how="all")
     df = df.apply(left_fill_row, axis=1)
@@ -64,7 +61,7 @@ def process_state_df(df: pd.DataFrame) -> pd.DataFrame:
     df = df[df.isnull().sum(axis=1) < 4]
     df = df.dropna(how="all", axis=1)
 
-    df.columns = state_columns
+    df.columns = doc_columns
 
     # Clean up columns for which we expect number values
     for col in df.columns[1:]:
@@ -84,15 +81,15 @@ def process_state_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def process_state_df_part(df: pd.DataFrame) -> pd.DataFrame:
+def process_doc_df_part(df: pd.DataFrame) -> pd.DataFrame:
     first_row = pd.DataFrame({c: [c] for c in df.columns})
     df = pd.concat([first_row, df])
 
-    df.columns = state_columns[: df.shape[1]]
+    df.columns = doc_columns[: df.shape[1]]
     df["inmates_in_support_beds"] = 0
     df["total_facility_occupancy"] = df.inmates_in_general_population_beds
 
-    return process_state_df(df)
+    return process_doc_df(df)
 
 
 county_columns = [
@@ -170,8 +167,8 @@ def extract_pdf_data(
     if not os.path.exists(target_dir):
         os.mkdir(target_dir)
 
-    is_state_df = lambda df: "OPERATIONAL\rCAPACITY 1" in df.columns
-    is_state_df_part = lambda df: "BOSTON PRE-RELEASE" in df.columns
+    is_doc_df = lambda df: "OPERATIONAL\rCAPACITY 1" in df.columns
+    is_doc_df_part = lambda df: "BOSTON PRE-RELEASE" in df.columns
     is_county_df = lambda df: "COUNTY\rFACILITIES" in df.columns
     is_report_date = lambda df: df.shape[1] == 1 and df.columns[0].startswith("DATE :")
 
@@ -179,25 +176,25 @@ def extract_pdf_data(
         print(pdf)
         dfs = read_pdf_with_template(pdf, tabula_template_path)
         report = {}
-        state_df_part = None
+        doc_df_part = None
         for df in dfs:
             if is_county_df(df):
                 report["county_df"] = process_county_df(df)
-            elif is_state_df(df):
-                report["state_df"] = process_state_df(df)
-            elif is_state_df_part(df):
-                state_df_part = process_state_df_part(df)
+            elif is_doc_df(df):
+                report["doc_df"] = process_doc_df(df)
+            elif is_doc_df_part(df):
+                doc_df_part = process_doc_df_part(df)
             elif is_report_date(df):
                 report["report_date"] = process_report_date(df)
 
-        if state_df_part is not None:
-            report["state_df"] = report["state_df"].append(state_df_part)
+        if doc_df_part is not None:
+            report["doc_df"] = report["doc_df"].append(doc_df_part)
 
-        for expected_key in ["county_df", "state_df", "report_date"]:
+        for expected_key in ["county_df", "doc_df", "report_date"]:
             assert expected_key in report, f"Couldn't extract {expected_key} from {pdf}"
 
         report["county_df"]["report_date"] = report["report_date"]
-        report["state_df"]["report_date"] = report["report_date"]
+        report["doc_df"]["report_date"] = report["report_date"]
 
         return report
 
@@ -206,15 +203,15 @@ def extract_pdf_data(
 
     # Join all DFs with an additional date column
     county_dfs = []
-    state_dfs = []
+    doc_dfs = []
     for report in reports:
         county_dfs.append(report["county_df"])
-        state_dfs.append(report["state_df"])
+        doc_dfs.append(report["doc_df"])
 
-    state_df = pd.concat(state_dfs)
+    doc_df = pd.concat(doc_dfs)
     county_df = pd.concat(county_dfs)
 
-    state_df.to_csv(os.path.join(target_dir, "state_facilities.csv"), index=False)
+    doc_df.to_csv(os.path.join(target_dir, "doc_facilities.csv"), index=False)
     county_df.to_csv(os.path.join(target_dir, "county_facilities.csv"), index=False)
 
 if __name__ == "__main__":

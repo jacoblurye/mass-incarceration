@@ -13,7 +13,7 @@ const DOC = "DOC";
 const IndexPage = () => {
   const { countyFile, stateFile } = useStaticQuery(graphql`
     query {
-      stateFile: file(relativePath: { eq: "state_facilities.csv" }) {
+      stateFile: file(relativePath: { eq: "doc_facilities.csv" }) {
         fields {
           ...CSVData
         }
