@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Heading, Text, Link as RebassLink } from "rebass";
-import { Link as GatsbyLink, useStaticQuery, graphql } from "gatsby";
+import { Box, Heading, Text } from "rebass";
+import { Link, useStaticQuery, graphql } from "gatsby";
 import LastUpdatedBadge from "./LastUpdatedBadge";
+import OutgoingLink from "./OutgoingLink";
 
 const Header = () => {
   const data = useStaticQuery(graphql`
@@ -19,20 +20,16 @@ const Header = () => {
   return (
     <Box>
       <Heading marginBottom={2} fontSize={[5, 5, 6, 6]}>
-        <GatsbyLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           {title}
-        </GatsbyLink>
+        </Link>
       </Heading>
       <Text my={1}>
         {description} Data from{" "}
-        <RebassLink
-          color="primary"
-          target="_blank"
-          rel="noreferrer noopener"
+        <OutgoingLink
+          text="mass.gov"
           href="https://www.mass.gov/lists/weekly-inmate-count-2020"
-        >
-          mass.gov
-        </RebassLink>
+        />
         .
       </Text>
       <Box my={2}>
