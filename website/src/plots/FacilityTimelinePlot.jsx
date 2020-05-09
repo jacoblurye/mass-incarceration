@@ -90,7 +90,7 @@ const FacilityTimelinePlot = ({ facility, csvData }) => {
         data={joinedSeries}
         width={config.width}
         height={config.height}
-        margin={{ top: 3, right: 15, bottom: 20, left: 40 }}
+        margin={{ top: 3, right: 15, bottom: 25, left: 40 }}
         colors={(d) => config.colors[d.id]}
         lineWidth={1}
         pointSize={4}
