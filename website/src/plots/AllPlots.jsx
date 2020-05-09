@@ -4,9 +4,14 @@ import { graphql } from "gatsby";
 import OverallTimelinePlot from "./OverallTimelinePlot";
 import FacilityPlots from "./FacilityPlots";
 
-const AllPlots = ({ sliceName, csvData }) => {
+const AllPlots = ({ sliceName, csvData, ...containerProps }) => {
   return (
-    <Flex alignItems="center" flexDirection="column">
+    <Flex
+      alignItems="center"
+      flexDirection="column"
+      width="100%"
+      {...containerProps}
+    >
       <Box my={2}>
         <OverallTimelinePlot
           title={`People in ${sliceName} Prisons`}
@@ -21,7 +26,7 @@ const AllPlots = ({ sliceName, csvData }) => {
 };
 
 export const query = graphql`
-  fragment CsvData on FileFields {
+  fragment CSVData on FileFields {
     csvData {
       facility
       operational_capacity
