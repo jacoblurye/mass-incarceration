@@ -63,9 +63,6 @@ const Footer = () => {
           {" on the criminal justice system's COVID-19 response across the US."}
         </Box>
       </Box>
-      <Box>
-        <Text>© 2020 Jacob Lurye</Text>
-      </Box>
     </Box>
   );
 };
