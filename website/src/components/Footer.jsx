@@ -60,7 +60,7 @@ const Footer = () => {
             href="https://www.vera.org/blog/covid-19-1"
             text="articles"
           />
-          {" on the criminal justice system's COVID-19 response across the US"}
+          {" on the criminal justice system's COVID-19 response across the US."}
         </Box>
       </Box>
       <Box>
