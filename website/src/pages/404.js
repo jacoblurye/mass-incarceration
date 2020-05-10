@@ -2,7 +2,7 @@ import { navigate } from "gatsby";
 
 const NotFoundPage = () => {
   if (typeof window !== "undefined") {
-    navigate("/");
+    navigate("/", { replace: true });
   }
 
   return null;

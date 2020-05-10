@@ -29,6 +29,7 @@ const IndexPage = () => {
   const stateData = stateFile.fields.csvData;
   const allData = [...countyData, ...stateData];
 
+  const [view, setView] = React.useState(ALL);
   const views = {
     [ALL]: <AllPlots sliceName={ALL} csvData={allData} />,
     [COUNTY]: <AllPlots sliceName={COUNTY} csvData={countyData} />,
@@ -36,8 +37,6 @@ const IndexPage = () => {
   };
   const labels = Object.keys(views);
 
-  const [view, setView] = React.useState(labels[0]);
-  console.log(view);
   return (
     <Layout>
       <SEO title="Mass. Prison Population" />
