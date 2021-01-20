@@ -101,7 +101,7 @@ const FacilityTimelinePlot = ({ facility, csvData }) => {
         enableGridX={false}
         axisBottom={{
           format: "%b %d",
-          tickValues: "every 4 weeks",
+          tickValues: "every 12 weeks",
         }}
         axisLeft={{
           tickValues: config.numTicks,
