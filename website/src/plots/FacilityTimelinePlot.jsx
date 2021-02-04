@@ -100,7 +100,7 @@ const FacilityTimelinePlot = ({ facility, csvData }) => {
         areaOpacity={0.5}
         enableGridX={false}
         axisBottom={{
-          format: "%b %d",
+          format: "%b %y",
           tickValues: "every 12 weeks",
         }}
         axisLeft={{

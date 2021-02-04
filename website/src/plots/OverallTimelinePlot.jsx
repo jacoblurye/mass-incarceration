@@ -105,8 +105,8 @@ const OverallTimelinePlot = ({ title, csvData, width, height: height_ }) => {
         enableArea={true}
         enableGridX={false}
         axisBottom={{
-          format: "%b %d",
-          tickValues: width < 1200 ? "every 4 weeks" : "every 2 weeks",
+          format: "%b '%y",
+          tickValues: "every 4 weeks",
           tickRotation: width < 800 ? -90 : 0,
         }}
         yScale={{ type: "linear", stacked: false }}
