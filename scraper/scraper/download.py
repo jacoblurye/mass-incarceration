@@ -5,18 +5,20 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup as bs
 
-from .constants import PDF_DIR, PDF_LIST_URL, SLEEP_FOR
+from .constants import PDF_DIR, PDF_LIST_URLS, SLEEP_FOR
 
 
-def get_pdf_urls(pdf_list_url: str = PDF_LIST_URL) -> List[str]:
+def get_pdf_urls(pdf_list_urls: List[str] = PDF_LIST_URLS) -> List[str]:
     """
     Extract the list of download URLs for the Massachusetts DOC's PDF 
     reports.
     """
-    html = requests.get(pdf_list_url).content
-    soup = bs(html, "lxml")
-    a_tags = soup.find_all("a", {"class": "ma__download-link__file-link"})
-    urls = [a.attrs["href"] for a in a_tags]
+    urls = []
+    for pdf_list_url in pdf_list_urls:
+        html = requests.get(pdf_list_url).content
+        soup = bs(html, "lxml")
+        a_tags = soup.find_all("a", {"class": "ma__download-link__file-link"})
+        urls.extend([a.attrs["href"] for a in a_tags])
     return urls
 
 

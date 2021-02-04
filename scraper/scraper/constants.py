@@ -11,4 +11,7 @@ BASE_DIR = os.path.join(SCRAPER_DIR, "..")
 PDF_DIR = os.path.join(BASE_DIR, "pdfs")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-PDF_LIST_URL = "https://www.mass.gov/lists/weekly-inmate-count-2020"
+PDF_LIST_URLS = [
+    "https://www.mass.gov/lists/weekly-inmate-count-2020",
+    "https://www.mass.gov/lists/weekly-inmate-count-2021",
+]
